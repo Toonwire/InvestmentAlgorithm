@@ -32,7 +32,7 @@ public class ControlUnit {
 		double price = 0, oldPrice = 0;
 		
 		for (File file : this.stockFiles) {
-			
+			System.out.println(file.getName());
 			Scanner s = new Scanner(file);
 			while(s.hasNextLine()) {
 				oldPrice = price;
@@ -68,7 +68,6 @@ public class ControlUnit {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-				
 		}
 	}
 	
@@ -80,9 +79,8 @@ public class ControlUnit {
 
 	private void printBalances() {
 		for (Investment investment : algorithms.keySet()) 
-			System.out.println(investment.getInvestmentName() + ":   \t" + algorithms.get(investment).getBalance());			
-		
-		
+			System.out.println("\t" + investment.getInvestmentName() + ":   \t" + algorithms.get(investment).getBalance());
+		System.out.println();
 	}
 
 	private void loadStocks() {
