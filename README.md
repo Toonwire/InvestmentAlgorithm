@@ -29,4 +29,4 @@ public class ToonwireInvestment extends Investment {
 `TradeAction.BUY` buys a stock, if you dont have one already.
 
 `TradeAction.SELL` sells your stock, if you have one, otherwise it does nothing.
-- Make a `pull request` when wanting to share your changes.
+- Make a **pull request** when wanting to share your changes.
