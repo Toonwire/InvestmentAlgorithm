@@ -30,5 +30,5 @@ public class ToonwireInvestment extends Investment {
 
 `TradeAction.SELL` sells your stock, if you have one, otherwise it does nothing.
 
-- Make a **pull request** when wanting to share your awesome investment algorithm! - or if you have some changes ;)
+- Make a **pull request** when wanting to share your awesome investment algorithm! - or if you have some changes.
 
