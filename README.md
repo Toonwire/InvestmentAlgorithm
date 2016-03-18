@@ -3,7 +3,7 @@ Algorithm attempts at creating an AI which will analyze stock markets.
 Trying to optimize profitting of buying and selling shares. 
 
 # Setup
-- Fork project to own repository on GitHub. Then pull to local repository if you like.
+- **Fork** project to own repository on GitHub. Then pull to local repository if you like.
 - Create your own <Name>Investment.java class which extends Investment.
 
 ```
@@ -29,4 +29,13 @@ public class ToonwireInvestment extends Investment {
 `TradeAction.BUY` buys a stock, if you dont have one already.
 
 `TradeAction.SELL` sells your stock, if you have one, otherwise it does nothing.
+
+- Add your solution to the `algorithms` map in the Driver.java class to test on real stock prices
+```
+public static void main(String[] args) {
+      algorithms.put(new ToonwireInvestment(), new DataSet());
+      // ...
+```
+
 - Make a **pull request** when wanting to share your changes.
+
