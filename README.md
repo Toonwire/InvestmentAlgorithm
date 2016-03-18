@@ -30,12 +30,5 @@ public class ToonwireInvestment extends Investment {
 
 `TradeAction.SELL` sells your stock, if you have one, otherwise it does nothing.
 
-- Add your solution to the `algorithms` map in the Driver.java class to test on real stock prices
-```
-public static void main(String[] args) {
-      algorithms.put(new ToonwireInvestment(), new DataSet());
-      // ...
-```
-
-- Make a **pull request** when wanting to share your changes.
+- Make a **pull request** when wanting to share your awesome investment algorithm! - or if you have some changes ;)
 
