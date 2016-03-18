@@ -7,7 +7,25 @@ Trying to optimize profitting of buying and selling shares.
 - Create your own <Name>Investment.java class which extends Investment.
 
 ```
+public class ToonwireInvestment extends Investment {...}
+```
+- Add unimplemented methods dictated by the Investment class
+```
 public class ToonwireInvestment extends Investment {
-      // investment algorithm goes here
+
+      public String getInvestmentName() {
+            return "NameGoesHere";
+      }
+      public TradeAction tick(double price) {
+            // investment algorithm goes here
+            
+            return someTradeAction   // TradeAction.BUY, TradeAction.SELL, TradeAction.DO_NOTHING
+      }
 }
 ```
+
+`TradeAction.DO_NOTHING` does nothing on the tick
+
+`TradeAction.BUY` buys a stock, if you dont have one already
+
+`TradeAction.SELL` sells your stock, if you have one, otherwise it does nothing
