@@ -24,8 +24,9 @@ public class ToonwireInvestment extends Investment {
 }
 ```
 
-`TradeAction.DO_NOTHING` does nothing on the tick
+`TradeAction.DO_NOTHING` does nothing on the tick.
 
-`TradeAction.BUY` buys a stock, if you dont have one already
+`TradeAction.BUY` buys a stock, if you dont have one already.
 
-`TradeAction.SELL` sells your stock, if you have one, otherwise it does nothing
+`TradeAction.SELL` sells your stock, if you have one, otherwise it does nothing.
+- Make a `pull request` when wanting to share your changes.
