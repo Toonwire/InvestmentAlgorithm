@@ -1,17 +1,15 @@
 package controller;
 
-import java.io.FileNotFoundException;
+import model.Model;
+import view.View;
 
 public class Driver {
 
 	
 	public static void main(String[] args) {
-		ControlUnit ctrlUnit = new ControlUnit();
+		Model model = new Model();
+		View view = new View(model);
+		new Controller(model, view);
 		
-		try {
-			ctrlUnit.runInvestments();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
 	}
 }

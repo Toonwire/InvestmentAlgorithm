@@ -11,7 +11,7 @@ import java.util.Scanner;
 import actions.TradeAction;
 
 public class ControlUnit {
-
+	
 	private Map<Investment, DataSet> algorithms;
 	private List<File> stockFiles;
 	
@@ -105,4 +105,9 @@ public class ControlUnit {
 		
 		return classes;
 	}
+
+	public int getInvestorCount() {
+		return this.algorithms.keySet().size();
+	}
+
 }
