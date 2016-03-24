@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.Color;
-import java.awt.Dimension;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -16,9 +15,10 @@ import org.jfree.data.xy.XYDataset;
 
 public class StockChart {
 	
-	private static final Color CUSTOM_DARK_GREEN = new Color(2, 125, 125);
 	private static final Color CUSTOM_GRIDLINE_GRAY = new Color(56,52,67);
 	private static final int MAXIMUM_POINTS = 150;
+	private static final Color CUSTOM_TICKS_COLOR = new Color(1,140,112);
+	private static final Color CUSTOM_GREEN = new Color(122,195,106);
 	
 
 	private JFreeChart chart;
@@ -27,14 +27,16 @@ public class StockChart {
 	private ChartPanel chartPanel;
 	private Day stockDay;
 	private String title;
-	private DateAxis xaxis;
-	private ValueAxis yaxis;
+	private DateAxis xAxis;
+	private ValueAxis yAxis;
 	
 	public StockChart(String title) {
 		this.title = title;
 		this.dataset = createDataset();
 		this.chart = createChart(dataset);
 		this.chartPanel = new ChartPanel(chart);
+
+		// let the layout managers handle sizing
 //		chartPanel.setPreferredSize(new Dimension(300, 200));
 		chartPanel.setMouseZoomable(false, false); 
 		
@@ -63,21 +65,23 @@ public class StockChart {
 		plot.setDomainGridlinePaint(CUSTOM_GRIDLINE_GRAY);
 		plot.setRangeGridlinesVisible(true);
 		plot.setRangeGridlinePaint(CUSTOM_GRIDLINE_GRAY);
-		plot.getRenderer().setSeriesPaint(0, CUSTOM_DARK_GREEN);
+		plot.getRenderer().setSeriesPaint(0, CUSTOM_GREEN);
 		
 		chart.setBackgroundPaint(Color.BLACK);
 		chart.getTitle().setVisible(false);
 		
 		/*
-		 * Want to show the x- and y-axis?
+		 * Should we show the x-axis?
 		 */
 		plot.getDomainAxis().setVisible(false);
-		plot.getRangeAxis().setLabelPaint(Color.BLACK);
+		//-------------
 
-		this.xaxis = new DateAxis();
-		this.yaxis = plot.getRangeAxis();
-		xaxis.setAutoRange(true);
-		yaxis.setAutoRange(true);
+		this.xAxis = new DateAxis();
+		this.yAxis = plot.getRangeAxis();
+		xAxis.setAutoRange(true);
+		yAxis.setAutoRange(true);		
+		yAxis.setTickLabelPaint(CUSTOM_TICKS_COLOR);
+		yAxis.setLabel(null);
 		
 		return chart;
 	}

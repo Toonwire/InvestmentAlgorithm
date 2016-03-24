@@ -2,11 +2,12 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 import javax.swing.Timer;
@@ -15,12 +16,12 @@ import actions.TradeAction;
 import model.Model;
 import view.View;
 
-public class Controller implements ActionListener {
+public class Controller implements ActionListener, MouseListener {
 
 	private Model model;
 	private View view;
 	
-	private Timer timer = new Timer(20, this);
+	private Timer timer = new Timer(100, this);
 	private double price = 0;
 	private Scanner s;
 	
@@ -29,9 +30,9 @@ public class Controller implements ActionListener {
 	public Controller(Model model, View view) {
 		this.model = model;
 		this.view = view;
+		view.getWinnerPanel().registerListeners(this);
 		
 		try{
-			
 			setupInvestments();
 			model.loadStocks();
 			
@@ -64,10 +65,19 @@ public class Controller implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
+	public void actionPerformed(ActionEvent ae) {
 		
-		if (s.hasNextLine()) {
-			double min = Double.MAX_VALUE, max = Double.MIN_VALUE, maxDiff = 0;
+		if (view.getWinnerPanel().isVisible()) {
+			view.reset();
+			setupInvestments();
+			// initialize stockChart.stockDay with the new setup
+			view.getStockChart().setInitialStockYear(model.getCurrentStockYear());
+
+			// stop and await mouseClick to re-fire
+			timer.stop();
+			
+		} else if (s.hasNextLine()) {
+			double min = Double.MAX_VALUE, max = -Double.MAX_VALUE, maxDiff = 0;
 			
 			double oldPrice = price;
 			price = Double.parseDouble(s.nextLine());
@@ -99,7 +109,8 @@ public class Controller implements ActionListener {
 				view.getBarChart().updateBalance(investment.getInvestmentName(), balance);
 				view.getStockPriceLabel().setText("€ " + price);
 				
-				view.getBalanceMap().get(investment).setText("" + df.format(balance).replace(',', '.'));
+				JLabel balanceLabel = view.getBalanceMap().get(investment);
+				balanceLabel.setText("" + df.format(balance).replace(',', '.'));
 				
 				if (balance < min) min = balance;
 				if (balance > max) max = balance;
@@ -109,23 +120,23 @@ public class Controller implements ActionListener {
 				
 			}	
 			// set proper range +10 padding on the barChart
-			view.getBarChart().setBalanceRange((maxDiff+max+10)*2);
+			view.getBarChart().setBalanceRange((maxDiff+10)*2);
 			view.getStockNameLabel().setText(filterStockName(model.getCurrentStockFile().getName()));
+			
+			
 			
 		} else {
 			try {
+				Investment winner = model.getWinner();
+				
 				if (!model.isAllFilesRead()) {
-					view.reset();
-					setupInvestments();
-					
-					// initialize stockChart.stockDay with the new setup
-					view.getStockChart().setInitialStockYear(model.getCurrentStockYear());
-					
-					Thread.sleep(2000);
-					this.s = new Scanner(model.getNextStockFile());
+					view.getWinnerLabel().setText(getWinTextHTML(winner));
+					view.announceWinner();
 					
 				}
 				else {
+					view.getWinnerLabel().setText(getWinTextHTML(winner));
+					view.announceWinner();
 					timer.stop();
 					this.s.close();
 				}
@@ -135,6 +146,23 @@ public class Controller implements ActionListener {
 		}
 	}
 
+	private String getWinTextHTML(Investment winner) {
+		// as for html text centering we use   <div style='text-align: center;'>
+		// in place of the usual label.setHorizontalAlignment(SwingConstants.CENTER)
+		return "<html><div style='text-align: center;'>"
+				+ 	"<h1 style=font-size:26'>"
+				+ 		"<u style='padding:10'>Congratulations!"
+				+ 	"</h1>"
+				+ 	"<body>"
+				+		"<b style='font-size:22;'>~~~ Winner ~~~ </b><br>"
+				+		"<i style='color:#669C2D; font-family:helvetica; font-size:24;'>" + winner.getInvestmentName() + "</i><br><br>"
+				+ 		"<b style='font-size:22;'>Total balance(€):</b><br>"
+				+		"<i style='color:#669C2D; font-family:helvetica; font-size:24;'>" + df.format(model.getAlgorithms().get(winner).getBalance()).replace(',', '.') + "</i>"
+				+ 	"</body>"
+				+ "</html>";
+
+	}
+
 	private String filterStockName(String name) {		
 		String[] substrings = name.substring(0,name.length()-4).split("_");
 		String stockName = substrings[1];
@@ -142,5 +170,50 @@ public class Controller implements ActionListener {
 		String stockEndYear = substrings[3];
 		
 		return "Stock: " + stockName + " from " + stockStartYear + " to " + stockEndYear;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent me) {
+		if (me.getClickCount() == 2) {
+			me.getComponent().setVisible(false);
+			/*
+			 *  this if can be moved to above if to not
+			 *  allow the last winnerPanel to be hidden
+			 */
+			if (!model.isAllFilesRead()){
+				try {
+					this.s = new Scanner(model.getNextStockFile());
+					timer.start();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}				
+			} else {
+				/*
+				 * scale the last barChart a bit nicer?
+				 */
+//				view.getBarChart().getRangeAxis().setAutoRange(true);
+			}
+		}
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent me) {
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent me) {
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent me) {
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent me) {
+		
 	}
 }

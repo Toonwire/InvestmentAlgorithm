@@ -18,9 +18,6 @@ public class ToonwireInvestment extends Investment {
 	private boolean hasStock = false;
 	private double maxDiff;
 	private double diff;
-	private double max;
-	private double profit;
-	private double lastBuy;
 
 	@Override
 	public String getInvestmentName() {
@@ -58,14 +55,11 @@ public class ToonwireInvestment extends Investment {
 		if (shouldBuy(price) && !hasStock) {
 			ta = TradeAction.BUY;
 			this.hasStock = true;
-			this.profit -= price;
-			this.lastBuy = price;
 			
 			
 		} else if (shouldSell(price) && hasStock) {
 			ta = TradeAction.SELL;
 			this.hasStock = false;
-			this.profit += price;
 		}
 		
 		if (price < min) {
@@ -82,7 +76,6 @@ public class ToonwireInvestment extends Investment {
 		
 		if (diff > maxDiff) {
 			maxDiff = diff;
-			max = value;
 			sell = true;
 		}
 		

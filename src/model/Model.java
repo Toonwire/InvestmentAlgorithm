@@ -89,4 +89,17 @@ public class Model {
 	public File getCurrentStockFile() {
 		return this.currentStockFile;
 	}
+
+	public Investment getWinner() {
+		Investment winner = null;
+		double maxBalance = -Double.MAX_VALUE;
+		for (Investment i : algorithms.keySet()) {
+			double balance = algorithms.get(i).getBalance();
+			if (balance > maxBalance) {
+				maxBalance = balance;
+				winner = i;
+			}
+		}
+		return winner;
+	}
 }

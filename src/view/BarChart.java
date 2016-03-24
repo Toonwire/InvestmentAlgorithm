@@ -1,7 +1,6 @@
 package view;
 
 import java.awt.Color;
-import java.text.DecimalFormat;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -10,7 +9,6 @@ import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
@@ -18,15 +16,10 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 public class BarChart {
 
-	private static final Color CUSTOM_BLUE = new Color(90,155,212);
-	private static final Color CUSTOM_RED = new Color(241,90,96);
-	private static final Color CUSTOM_GREEN = new Color(122,195,106);
-	private static final Color CUSTOM_DARK_GREEN = new Color(2,125,125);
 	private static final Color CUSTOM_GRIDLINE_GRAY = new Color(56,52,67);
-	private static final Color CUSTOM_DARK_BLUE = new Color(48,12,186);
 	private static final Color CUSTOM_TICKS_COLOR = new Color(1,140,112);
 	private static final Color CUSTOM_BALANCE_COLOR = new Color(33,108,42);
-	private static final Color CUSTOM_BAR_COLOR = new Color(0,140,72);
+	private static final Color CUSTOM_DAMPENED_CYAN = new Color(43,132,103);
 	
 	private final JFreeChart chart;
 	private DefaultCategoryDataset dataset;
@@ -41,6 +34,7 @@ public class BarChart {
 		this.chart = createChart(dataset);
 		this.chartPanel = new ChartPanel(chart);
 		
+		// let the layout managers handle sizing
 //		chartPanel.setPreferredSize(new Dimension(300, 200));
 		chartPanel.setMouseZoomable(false, false); 
 	}
@@ -63,7 +57,6 @@ public class BarChart {
 				false,
 				false);
 
-			chart.setBackgroundPaint(new Color(0,85,85));
 			chart.setBackgroundPaint(Color.BLACK);
 			
 	        final CategoryPlot plot = chart.getCategoryPlot();
@@ -74,13 +67,9 @@ public class BarChart {
 			plot.setDomainGridlinePaint(CUSTOM_GRIDLINE_GRAY);
 			plot.setRangeGridlinesVisible(true);
 			plot.setRangeGridlinePaint(CUSTOM_GRIDLINE_GRAY);
-			plot.getRenderer().setSeriesPaint(0, CUSTOM_BAR_COLOR);
+			plot.getRenderer().setSeriesPaint(0, CUSTOM_DAMPENED_CYAN);
 			
 			this.rangeAxis = (NumberAxis) plot.getRangeAxis();
-//			rangeAxis.setAutoRange(true);
-//			rangeAxis.setFixedAutoRange(100);
-			rangeAxis.setRangeAboutValue(0,100);
-//			rangeAxis.centerRange(0);
 			rangeAxis.setLabelPaint(CUSTOM_BALANCE_COLOR);
 			rangeAxis.setTickLabelPaint(CUSTOM_TICKS_COLOR);
 			rangeAxis.setTickUnit(new NumberTickUnit(10));
@@ -99,10 +88,21 @@ public class BarChart {
 	}
 
 	public void updateBalance(String investorName, double balance) {
-		this.dataset.addValue(balance, "balance", investorName);
+		dataset.addValue(balance, "balance", investorName);
 	}
 	
 	public void setBalanceRange(double range) {
 		rangeAxis.setRangeAboutValue(0, range);
+		int rounded = (int) (((int)range + 50) / 100 * 100);
+		if (rounded % 100 == 0 && rounded != 0) 
+			rangeAxis.setTickUnit(new NumberTickUnit(rounded/10));
+		else
+			rangeAxis.setTickUnit(new NumberTickUnit(10));
 	}
+	
+	public NumberAxis getRangeAxis() {
+		return this.rangeAxis;
+	}
+	
+	
 }

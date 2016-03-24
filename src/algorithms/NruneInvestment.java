@@ -9,17 +9,9 @@ import controller.Investment;
 
 public class NruneInvestment extends Investment {
 	LinkedList<Double> priceList = new LinkedList<>();
-	private double lastPrice = 0;
-	private double diff = 0;	
-	private double max = Double.MIN_VALUE, maxDiff = Double.MIN_VALUE;
-	private double min = 0;
-	private double average = 0;
-	private List<Double> averageList = new ArrayList<>();
-	private double lastBuy;
 	
 	int pricesToStore = 150;
 	double margin = 0.005; 
-			
 	double profit = 0;
 	int count = 0;
 	double avarage;			
@@ -49,7 +41,6 @@ public class NruneInvestment extends Investment {
 			this.buyPrice = price;
 			this.hasStock = true;
 			this.profit -= price;
-			this.lastBuy = price;
 		} else if ((this.avarage < this.buyPrice && this.minDiff > this.avarage - price && this.avarage > price && this.hasStock) || (this.avarage < price*(1+this.margin) && this.hasStock) || (this.buyPrice*1.03 < price && this.hasStock)) {
 			if(this.hasStock)
 			ta = TradeAction.SELL;
