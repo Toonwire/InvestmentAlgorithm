@@ -22,7 +22,7 @@ public class NruneInvestment extends Investment {
 			
 	double profit = 0;
 	int count = 0;
-	double avarage;			
+	double avarage;
 	boolean hasStock = false;
 	double localMinPrice, localMaxPrice, buyPrice, minDiff = 0, maxDiff2;
 	List<Double> priceHistory = new ArrayList<Double>();
