@@ -26,6 +26,7 @@ public class Controller implements ActionListener, MouseListener {
 	private Scanner s;
 	
 	private DecimalFormat df = new DecimalFormat("#.#");
+	private String currencySymbol = "\u20ac";
 	
 	public Controller(Model model, View view) {
 		this.model = model;
@@ -40,6 +41,11 @@ public class Controller implements ActionListener, MouseListener {
 			this.s = new Scanner(file);
 			view.getStockChart().setInitialStockYear(model.getCurrentStockYear());
 			
+			/* 
+			 * TODO: make winnerPanel visible with a list of the loaded stock files.
+			 * make the stock files "checkable" allowing for specified selection of stock files to run
+			 * and not just running them all be default
+			 */
 			timer.start();
 			
 		} catch(Exception e) {
@@ -107,7 +113,7 @@ public class Controller implements ActionListener, MouseListener {
 				double balance = data.getBalance();
 				view.getStockChart().addStockPrice(price);
 				view.getBarChart().updateBalance(investment.getInvestmentName(), balance);
-				view.getStockPriceLabel().setText("€ " + price);
+				view.getStockPriceLabel().setText(currencySymbol + " " + price);
 				
 				JLabel balanceLabel = view.getBalanceMap().get(investment);
 				balanceLabel.setText("" + df.format(balance).replace(',', '.'));
@@ -156,7 +162,7 @@ public class Controller implements ActionListener, MouseListener {
 				+ 	"<body>"
 				+		"<b style='font-size:22;'>~~~ Winner ~~~ </b><br>"
 				+		"<i style='color:#669C2D; font-family:helvetica; font-size:24;'>" + winner.getInvestmentName() + "</i><br><br>"
-				+ 		"<b style='font-size:22;'>Total balance(€):</b><br>"
+				+ 		"<b style='font-size:22;'>Total balance(" + currencySymbol +"):</b><br>"
 				+		"<i style='color:#669C2D; font-family:helvetica; font-size:24;'>" + df.format(model.getAlgorithms().get(winner).getBalance()).replace(',', '.') + "</i>"
 				+ 	"</body>"
 				+ "</html>";

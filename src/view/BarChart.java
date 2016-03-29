@@ -50,7 +50,7 @@ public class BarChart {
 		final JFreeChart chart = ChartFactory.createBarChart(
 				title,
 				"Investor",
-				"Balance (€)",
+				"Balance",
 				dataset,
 				PlotOrientation.HORIZONTAL,
 				false,

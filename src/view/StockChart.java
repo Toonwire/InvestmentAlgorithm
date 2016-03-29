@@ -73,12 +73,16 @@ public class StockChart {
 		/*
 		 * Should we show the x-axis?
 		 */
-		plot.getDomainAxis().setVisible(false);
+		plot.getDomainAxis().setVisible(true);
 		//-------------
 
-		this.xAxis = new DateAxis();
+		this.xAxis = (DateAxis)	plot.getDomainAxis();
 		this.yAxis = plot.getRangeAxis();
+		
 		xAxis.setAutoRange(true);
+		xAxis.setTickLabelPaint(CUSTOM_TICKS_COLOR);
+		xAxis.setLabel(null);
+		
 		yAxis.setAutoRange(true);		
 		yAxis.setTickLabelPaint(CUSTOM_TICKS_COLOR);
 		yAxis.setLabel(null);
