@@ -6,15 +6,26 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
+import sun.audio.*;
+
+import java.io.*;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
-import actions.TradeAction;
 import model.Model;
 import view.View;
+import actions.TradeAction;
 
 public class Controller implements ActionListener, MouseListener {
 
@@ -27,6 +38,12 @@ public class Controller implements ActionListener, MouseListener {
 	
 	private DecimalFormat df = new DecimalFormat("#.#");
 	private String currencySymbol = "\u20ac";
+	
+	private File yourFile = new File("sounds/Darude.wav");
+    private AudioInputStream stream;
+    private AudioFormat format;
+    private DataLine.Info info;
+    private Clip clip;
 	
 	public Controller(Model model, View view) {
 		this.model = model;
@@ -47,6 +64,7 @@ public class Controller implements ActionListener, MouseListener {
 			 * and not just running them all be default
 			 */
 			timer.start();
+			playSound();
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -194,6 +212,8 @@ public class Controller implements ActionListener, MouseListener {
 					e.printStackTrace();
 				}				
 			} else {
+
+				killSound();
 				/*
 				 * scale the last barChart a bit nicer?
 				 */
@@ -220,6 +240,34 @@ public class Controller implements ActionListener, MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent me) {
+		
+	}
+	
+	public void playSound() {
+	    try {
+
+	        stream = AudioSystem.getAudioInputStream(yourFile);
+	        format = stream.getFormat();
+	        info = new DataLine.Info(Clip.class, format);
+	        clip = (Clip) AudioSystem.getLine(info);
+	        clip.open(stream);
+	        clip.start();
+	        
+	    } catch(Exception ex) {
+	        System.out.println("Error with playing sound.");
+	        ex.printStackTrace();
+	    }
+	}
+	
+	private void killSound() {
+		try {
+			stream.close();
+			clip.flush();
+			clip.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 }
