@@ -21,7 +21,7 @@ public class Controller implements ActionListener, MouseListener {
 	private Model model;
 	private View view;
 	
-	private Timer timer = new Timer(100, this);
+	private Timer timer = new Timer(80, this);
 	private double price = 0;
 	private Scanner s;
 	
