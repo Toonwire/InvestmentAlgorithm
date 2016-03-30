@@ -16,7 +16,7 @@ import org.jfree.data.xy.XYDataset;
 public class StockChart {
 	
 	private static final Color CUSTOM_GRIDLINE_GRAY = new Color(56,52,67);
-	private static final int MAXIMUM_POINTS = 150;
+	private static final int MAXIMUM_POINTS = 300;
 	private static final Color CUSTOM_TICKS_COLOR = new Color(1,140,112);
 	private static final Color CUSTOM_GREEN = new Color(122,195,106);
 	
