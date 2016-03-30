@@ -5,16 +5,22 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import controller.Controller;
 import controller.Investment;
 import model.Model;
 
@@ -32,12 +38,14 @@ public class View extends JFrame{
 	private StockChart stockChart;
 	private BarChart barChart;
 	private JPanel mergedPanel, stockPanel, investorPanel, stockGraphPanel,
-					investorBarChartPanel, balancePanel;
+					investorBarChartPanel, balancePanel, stockPriceSoundPanel;
 	
 	private WinnerPanel winnerPanel;
-	private JLabel stockNameLabel, stockPriceLabel, winnerLabel;
+	private JLabel stockNameLabel, stockPriceLabel, winnerLabel, soundLabel;
 	private JLayeredPane layerPane;
 	private Map<Investment, JLabel> balanceMap;
+	private ImageIcon speakerIcon, muteIcon;
+	
 	
 
 	
@@ -50,13 +58,13 @@ public class View extends JFrame{
 		
 		this.stockChart = new StockChart("Stock Prices");
 		this.barChart = new BarChart("Top Investors");
-		
 		this.balanceMap = new HashMap<Investment, JLabel>();
-		
 		this.stockPanel = new JPanel(new BorderLayout());
 		this.stockGraphPanel = stockChart.getChartPanel();
 		this.stockNameLabel = new JLabel("");
 		this.stockPriceLabel = new JLabel("");
+		this.stockPriceSoundPanel = new JPanel(new BorderLayout());
+		this.soundLabel = new JLabel();
 		
 		stockGraphPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		stockGraphPanel.setBackground(Color.BLACK); 
@@ -68,13 +76,30 @@ public class View extends JFrame{
 		stockPriceLabel.setForeground(new Color(28,166,196));
 		stockPriceLabel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		stockPriceLabel.setFont(new Font("Helvetica", Font.BOLD, 28));
+
+		soundLabel.setHorizontalAlignment(JLabel.RIGHT);
+		soundLabel.setName("soundLabel");
+		
+		stockPriceSoundPanel.setBackground(Color.BLACK);
+		stockPriceSoundPanel.add(soundLabel, BorderLayout.NORTH);
+		stockPriceSoundPanel.add(stockPriceLabel, BorderLayout.CENTER);
+		
 		
 		stockPanel.setBackground(Color.BLACK);
 		stockPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		stockPanel.add(stockGraphPanel, BorderLayout.CENTER);
 		stockPanel.add(stockNameLabel, BorderLayout.NORTH);
-		stockPanel.add(stockPriceLabel, BorderLayout.EAST);
-	
+		stockPanel.add(stockPriceSoundPanel, BorderLayout.EAST);
+		
+		try {
+			Image img = ImageIO.read(new File("src/view/icons/speaker.png"));
+			this.speakerIcon = new ImageIcon(img.getScaledInstance(20,20, Image.SCALE_SMOOTH));
+			img = ImageIO.read(new File("src/view/icons/mute.png"));
+			this.muteIcon = new ImageIcon(img.getScaledInstance(20,20, Image.SCALE_SMOOTH));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		this.investorPanel = new JPanel(new BorderLayout());
 		this.balancePanel = new JPanel();
 		balancePanel.setBackground(Color.BLACK);
@@ -119,7 +144,7 @@ public class View extends JFrame{
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
-
+		
 	}
 
 	public JPanel getStockPanel() {
@@ -189,4 +214,18 @@ public class View extends JFrame{
 	public WinnerPanel getWinnerPanel() {
 		return this.winnerPanel;
 	}
+	
+	public void setSoundIcon(boolean playing) {
+		if (playing)
+			soundLabel.setIcon(speakerIcon);
+		else
+			soundLabel.setIcon(muteIcon);
+		
+	}
+	
+	public void registerListeners(Controller controller) {
+		soundLabel.addMouseListener(controller);
+		winnerPanel.registerListeners(controller);
+	}
+
 }

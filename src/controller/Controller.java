@@ -6,14 +6,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.Scanner;
-
-import sun.audio.*;
-
-import java.io.*;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -32,23 +26,24 @@ public class Controller implements ActionListener, MouseListener {
 	private Model model;
 	private View view;
 	
-	private Timer timer = new Timer(80, this);
+	private Timer timer = new Timer(10, this);
 	private double price = 0;
 	private Scanner s;
 	
 	private DecimalFormat df = new DecimalFormat("#.#");
 	private String currencySymbol = "\u20ac";
 	
-	private File yourFile = new File("sounds/Darude.wav");
+	private File soundFile = new File("sounds/darude.wav");
     private AudioInputStream stream;
     private AudioFormat format;
     private DataLine.Info info;
     private Clip clip;
+    private int lastFrame;
 	
 	public Controller(Model model, View view) {
 		this.model = model;
 		this.view = view;
-		view.getWinnerPanel().registerListeners(this);
+		view.registerListeners(this);
 		
 		try{
 			setupInvestments();
@@ -63,8 +58,10 @@ public class Controller implements ActionListener, MouseListener {
 			 * make the stock files "checkable" allowing for specified selection of stock files to run
 			 * and not just running them all be default
 			 */
+			
+			loadSound();
+			view.setSoundIcon(false);
 			timer.start();
-			playSound();
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -147,8 +144,6 @@ public class Controller implements ActionListener, MouseListener {
 			view.getBarChart().setBalanceRange((maxDiff+10)*2);
 			view.getStockNameLabel().setText(filterStockName(model.getCurrentStockFile().getName()));
 			
-			
-			
 		} else {
 			try {
 				Investment winner = model.getWinner();
@@ -198,7 +193,7 @@ public class Controller implements ActionListener, MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
-		if (me.getClickCount() == 2) {
+		if (me.getComponent().getName().equals("winnerPanel") && me.getClickCount() == 2) {
 			me.getComponent().setVisible(false);
 			/*
 			 *  this if can be moved to above if to not
@@ -212,13 +207,17 @@ public class Controller implements ActionListener, MouseListener {
 					e.printStackTrace();
 				}				
 			} else {
-
-				killSound();
 				/*
 				 * scale the last barChart a bit nicer?
 				 */
 //				view.getBarChart().getRangeAxis().setAutoRange(true);
 			}
+		} else if (me.getComponent().getName().equals("soundLabel")) {
+			if (clip != null && clip.isRunning()) 
+				pauseSound();
+			else if (clip != null && !clip.isRunning())
+				playSound();
+			
 		}
 		
 	}
@@ -243,15 +242,14 @@ public class Controller implements ActionListener, MouseListener {
 		
 	}
 	
-	public void playSound() {
+	public void loadSound() {
 	    try {
 
-	        stream = AudioSystem.getAudioInputStream(yourFile);
+	        stream = AudioSystem.getAudioInputStream(soundFile);
 	        format = stream.getFormat();
 	        info = new DataLine.Info(Clip.class, format);
 	        clip = (Clip) AudioSystem.getLine(info);
 	        clip.open(stream);
-	        clip.start();
 	        
 	    } catch(Exception ex) {
 	        System.out.println("Error with playing sound.");
@@ -259,15 +257,38 @@ public class Controller implements ActionListener, MouseListener {
 	    }
 	}
 	
-	private void killSound() {
-		try {
-			stream.close();
-			clip.flush();
-			clip.close();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//	private void killSound() {
+//		try {
+//			stream.close();
+//			clip.flush();
+//			clip.close();
+//			this.stream = null;
+//			this.clip = null;
+//			
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
+	
+	public void pauseSound() {
 		
-	}
+        lastFrame = clip.getFramePosition();
+        clip.stop();
+        view.setSoundIcon(false);
+        
+    }
+
+    public void playSound() {
+    	
+	   // Make sure we haven't passed the end of the file
+        if (lastFrame < clip.getFrameLength())
+            clip.setFramePosition(lastFrame);
+        else 
+        	clip.setFramePosition(0);
+        
+        clip.start();
+        view.setSoundIcon(true);
+
+    }
+
 }
