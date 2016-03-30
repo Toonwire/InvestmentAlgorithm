@@ -9,36 +9,31 @@ import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
+import actions.TradeAction;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import model.Model;
 import view.View;
-import actions.TradeAction;
 
 public class Controller implements ActionListener, MouseListener {
 
 	private Model model;
 	private View view;
 	
-	private Timer timer = new Timer(10, this);
+	private Timer timer = new Timer(80, this);
 	private double price = 0;
 	private Scanner s;
 	
 	private DecimalFormat df = new DecimalFormat("#.#");
 	private String currencySymbol = "\u20ac";
 	
-	private File soundFile = new File("sounds/darude.wav");
-    private AudioInputStream stream;
-    private AudioFormat format;
-    private DataLine.Info info;
-    private Clip clip;
-    private int lastFrame;
+	private File soundFile = new File("sounds/darude.mp3");
+	private MediaPlayer mediaPlayer;
+	private boolean atEndOfMedia = false;
 	
 	public Controller(Model model, View view) {
 		this.model = model;
@@ -213,9 +208,10 @@ public class Controller implements ActionListener, MouseListener {
 //				view.getBarChart().getRangeAxis().setAutoRange(true);
 			}
 		} else if (me.getComponent().getName().equals("soundLabel")) {
-			if (clip != null && clip.isRunning()) 
+			Status status = mediaPlayer.getStatus();
+			if (status == MediaPlayer.Status.PLAYING) 
 				pauseSound();
-			else if (clip != null && !clip.isRunning())
+			else if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY)
 				playSound();
 			
 		}
@@ -243,52 +239,27 @@ public class Controller implements ActionListener, MouseListener {
 	}
 	
 	public void loadSound() {
-	    try {
-
-	        stream = AudioSystem.getAudioInputStream(soundFile);
-	        format = stream.getFormat();
-	        info = new DataLine.Info(Clip.class, format);
-	        clip = (Clip) AudioSystem.getLine(info);
-	        clip.open(stream);
-	        
-	    } catch(Exception ex) {
-	        System.out.println("Error with playing sound.");
-	        ex.printStackTrace();
-	    }
+		new javafx.embed.swing.JFXPanel(); // forces JavaFX init - needed for .mp3 playing
+		
+	    String uriString = soundFile.toURI().toString();
+	    this.mediaPlayer = new MediaPlayer(new Media(uriString));
+	    mediaPlayer.setOnEndOfMedia(new Runnable() {
+	    	public void run() {
+	    		atEndOfMedia = true;
+	    	}
+	    });
 	}
 	
-//	private void killSound() {
-//		try {
-//			stream.close();
-//			clip.flush();
-//			clip.close();
-//			this.stream = null;
-//			this.clip = null;
-//			
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
 	public void pauseSound() {
-		
-        lastFrame = clip.getFramePosition();
-        clip.stop();
+        mediaPlayer.pause();
         view.setSoundIcon(false);
         
     }
 
     public void playSound() {
-    	
-	   // Make sure we haven't passed the end of the file
-        if (lastFrame < clip.getFrameLength())
-            clip.setFramePosition(lastFrame);
-        else 
-        	clip.setFramePosition(0);
-        
-        clip.start();
-        view.setSoundIcon(true);
-
+    	if (!atEndOfMedia) {
+	    	mediaPlayer.play();
+	    	view.setSoundIcon(true);
+    	}
     }
-
 }
