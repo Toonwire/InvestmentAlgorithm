@@ -53,7 +53,7 @@ public class View extends JFrame{
 		super("Title");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(false);
-		this.setPreferredSize(new Dimension(600,500));
+		this.setPreferredSize(new Dimension(800,700));
 		this.setLayout(new BorderLayout());
 		
 		this.stockChart = new StockChart("Stock Prices");
@@ -124,8 +124,8 @@ public class View extends JFrame{
 		
 		
 		this.layerPane = new JLayeredPane();
-		layerPane.setBounds(0,0,600,500);
-		mergedPanel.setBounds(0, 0, 600, 471);	// 471 in y-direction 'cuz reasons..
+		layerPane.setBounds(0,0,800,700);
+		mergedPanel.setBounds(0, 0, 800, 665);	// 665 in y-direction 'cuz reasons..
 		
 		this.winnerLabel = new JLabel("");
 		winnerLabel.setForeground(CUSTOM_DAMPENED_CYAN2);
