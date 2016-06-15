@@ -6,7 +6,7 @@ import java.util.List;
 import actions.TradeAction;
 import controller.Investment;
 
-public class funnyInvestment extends Investment {
+public class FunnyInvestment extends Investment {
 
 	private final int PRICESTOSTORE = 20;
 	private final double MARGIN = 0.01;
