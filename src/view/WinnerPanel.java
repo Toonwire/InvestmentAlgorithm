@@ -36,5 +36,9 @@ public class WinnerPanel extends JPanel {
     public void registerListeners(Controller controller) {
     	this.addMouseListener(controller);
     }
+    
+	public String getName() {
+    	return "winnerPanel";
+    }
 
 }

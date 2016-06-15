@@ -13,6 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.Timer;
 
 import actions.TradeAction;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import model.Model;
 import view.View;
 
@@ -21,17 +24,21 @@ public class Controller implements ActionListener, MouseListener {
 	private Model model;
 	private View view;
 	
-	private Timer timer = new Timer(100, this);
+	private Timer timer = new Timer(80, this);
 	private double price = 0;
 	private Scanner s;
 	
 	private DecimalFormat df = new DecimalFormat("#.#");
 	private String currencySymbol = "\u20ac";
 	
+	private File soundFile = new File("sounds/darude.mp3");
+	private MediaPlayer mediaPlayer;
+	private boolean atEndOfMedia = false;
+	
 	public Controller(Model model, View view) {
 		this.model = model;
 		this.view = view;
-		view.getWinnerPanel().registerListeners(this);
+		view.registerListeners(this);
 		
 		try{
 			setupInvestments();
@@ -46,6 +53,9 @@ public class Controller implements ActionListener, MouseListener {
 			 * make the stock files "checkable" allowing for specified selection of stock files to run
 			 * and not just running them all be default
 			 */
+			
+			loadSound();
+			view.setSoundIcon(false);
 			timer.start();
 			
 		} catch(Exception e) {
@@ -129,8 +139,6 @@ public class Controller implements ActionListener, MouseListener {
 			view.getBarChart().setBalanceRange((maxDiff+10)*2);
 			view.getStockNameLabel().setText(filterStockName(model.getCurrentStockFile().getName()));
 			
-			
-			
 		} else {
 			try {
 				Investment winner = model.getWinner();
@@ -180,7 +188,7 @@ public class Controller implements ActionListener, MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
-		if (me.getClickCount() == 2) {
+		if (me.getComponent().getName().equals("winnerPanel") && me.getClickCount() == 2) {
 			me.getComponent().setVisible(false);
 			/*
 			 *  this if can be moved to above if to not
@@ -199,6 +207,13 @@ public class Controller implements ActionListener, MouseListener {
 				 */
 //				view.getBarChart().getRangeAxis().setAutoRange(true);
 			}
+		} else if (me.getComponent().getName().equals("soundLabel")) {
+			Status status = mediaPlayer.getStatus();
+			if (status == MediaPlayer.Status.PLAYING) 
+				pauseSound();
+			else if (status == MediaPlayer.Status.PAUSED || status == MediaPlayer.Status.READY)
+				playSound();
+			
 		}
 		
 	}
@@ -222,4 +237,29 @@ public class Controller implements ActionListener, MouseListener {
 	public void mouseReleased(MouseEvent me) {
 		
 	}
+	
+	public void loadSound() {
+		new javafx.embed.swing.JFXPanel(); // forces JavaFX init - needed for .mp3 playing
+		
+	    String uriString = soundFile.toURI().toString();
+	    this.mediaPlayer = new MediaPlayer(new Media(uriString));
+	    mediaPlayer.setOnEndOfMedia(new Runnable() {
+	    	public void run() {
+	    		atEndOfMedia = true;
+	    	}
+	    });
+	}
+	
+	public void pauseSound() {
+        mediaPlayer.pause();
+        view.setSoundIcon(false);
+        
+    }
+
+    public void playSound() {
+    	if (!atEndOfMedia) {
+	    	mediaPlayer.play();
+	    	view.setSoundIcon(true);
+    	}
+    }
 }
