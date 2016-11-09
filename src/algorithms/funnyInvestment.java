@@ -12,7 +12,7 @@ public class funnyInvestment extends Investment {
 	private final double MARGIN = 0.01;
 	
 	private boolean hasStuck = false;
-	private double localMinPrice, localMaxPrice, buyPrice, minDiff = 0, maxDiff2, average;
+	private double buyPrice, average;
 	
 	private List<Double> priceHistory = new ArrayList<Double>();
 	
@@ -41,11 +41,6 @@ public class funnyInvestment extends Investment {
 			this.hasStuck = false;
 			this.buyPrice = 0;
 		}
-		
-		this.localMinPrice = getLocalMin(this.priceHistory);
-		this.localMaxPrice = getLocalMax(this.priceHistory);
-
-		this.minDiff = this.average - this.localMinPrice;
 		
 		return ta;
 	}

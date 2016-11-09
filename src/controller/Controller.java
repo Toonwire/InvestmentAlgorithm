@@ -191,7 +191,7 @@ public class Controller implements ActionListener, MouseListener {
 		if (me.getComponent().getName().equals("winnerPanel") && me.getClickCount() == 2) {
 			me.getComponent().setVisible(false);
 			/*
-			 *  this if can be moved to above if to not
+			 *  this if can be moved to above the 'if' to not
 			 *  allow the last winnerPanel to be hidden
 			 */
 			if (!model.isAllFilesRead()){

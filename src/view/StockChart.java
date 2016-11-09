@@ -73,7 +73,7 @@ public class StockChart {
 		/*
 		 * Should we show the x-axis?
 		 */
-		plot.getDomainAxis().setVisible(true);
+		plot.getDomainAxis().setVisible(false);
 		//-------------
 
 		this.xAxis = (DateAxis)	plot.getDomainAxis();

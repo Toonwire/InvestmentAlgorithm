@@ -50,7 +50,7 @@ public class View extends JFrame{
 
 	
 	public View(Model model){		
-		super("Title");
+		super("Stock Market - Investment Strategy Analyzer");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(false);
 		this.setPreferredSize(new Dimension(800,700));
@@ -133,7 +133,7 @@ public class View extends JFrame{
 		winnerLabel.setVisible(true);
 		
 		this.winnerPanel = new WinnerPanel();
-		winnerPanel.setBounds(180,130,240,220);
+		winnerPanel.setBounds(300,260,240,220);
 		winnerPanel.setVisible(false);
 		winnerPanel.add(winnerLabel);
 		
